@@ -71,8 +71,6 @@ def scan(target, start_port, end_port):
     print(Fore.CYAN + f"[*] Finished : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 def main():
-    print_banner()
-
     if len(sys.argv) < 2:
         print(Fore.YELLOW + "Usage:")
         print("  python scanner.py <target>")
