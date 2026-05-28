@@ -43,20 +43,21 @@ def scan_port(ip, port, timeout=1):
 def get_service(port):
     return COMMON_SERVICES.get(port, "Unknown")
 
-def scan(target, start_port, end_port):
+def scan(target, start_port, end_port, timeout=1):
     print_banner()
 
     ip = resolve_target(target)
 
     print(Fore.CYAN + f"[*] Target   : {target} ({ip})")
     print(Fore.CYAN + f"[*] Ports    : {start_port} - {end_port}")
+    print(Fore.CYAN + f"[*] Timeout  : {timeout}s per port")
     print(Fore.CYAN + f"[*] Started  : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(Fore.YELLOW + "-" * 45)
 
     open_ports = []
 
     for port in range(start_port, end_port + 1):
-        if scan_port(ip, port):
+        if scan_port(ip, port, timeout):
             service = get_service(port)
             open_ports.append(port)
             print(Fore.GREEN + f"[+] Port {port:<6} OPEN   {service}")
@@ -72,14 +73,17 @@ def scan(target, start_port, end_port):
 
 def main():
     if len(sys.argv) < 2:
+        print_banner()
         print(Fore.YELLOW + "Usage:")
         print("  python scanner.py <target>")
         print("  python scanner.py <target> <port>")
         print("  python scanner.py <target> <start_port> <end_port>")
+        print("  python scanner.py <target> <start_port> <end_port> <timeout>")
         print(Fore.CYAN + "\nExamples:")
         print("  python scanner.py localhost")
         print("  python scanner.py localhost 80")
         print("  python scanner.py localhost 1 1000")
+        print("  python scanner.py localhost 1 1000 0.5")
         sys.exit(1)
 
     target = sys.argv[1]
@@ -94,6 +98,13 @@ def main():
         start_port = int(sys.argv[2])
         end_port = int(sys.argv[3])
         scan(target, start_port, end_port)
+
+    # Port range + custom timeout
+    elif len(sys.argv) == 5:
+        start_port = int(sys.argv[2])
+        end_port = int(sys.argv[3])
+        timeout = float(sys.argv[4])
+        scan(target, start_port, end_port, timeout)
 
     # Default — scan common ports
     else:
