@@ -4,19 +4,62 @@ A collection of Python CLI security tools built as part of my 90-day open-source
 
 ## Tools
 
-| Tool                    | Description                               | Status      |
-| ----------------------- | ----------------------------------------- | ----------- |
-| 🔍 Port Scanner         | TCP port scanner with service detection   | 🔜 Building |
-| 🌐 Subdomain Enumerator | Wordlist-based subdomain discovery        | 🔜 Building |
-| 🔑 JWT Analyzer         | CLI tool to decode and inspect JWT tokens | 🔜 Building |
+| Tool                    | Description                                            | Status      |
+| ----------------------- | ------------------------------------------------------ | ----------- |
+| 🔍 Port Scanner         | TCP port scanner with service detection                | ✅ Done     |
+| 🌐 Subdomain Enumerator | Wordlist-based subdomain discovery with HTTPS + export | ✅ Done     |
+| 🔑 JWT Analyzer         | CLI tool to decode and inspect JWT tokens              | 🔜 Building |
 
 ## Usage
 
-Each tool is standalone and runs from the command line.
-Full documentation coming as each tool is completed.
+### 🔍 Port Scanner
+
+```bash
+cd tools/port_scanner
+python scanner.py <target>
+python scanner.py <target> <port>
+python scanner.py <target> <start_port> <end_port>
+python scanner.py <target> <start_port> <end_port> <timeout>
+```
+
+Examples:
+
+```bash
+python scanner.py localhost
+python scanner.py localhost 80
+python scanner.py localhost 1 1000
+python scanner.py localhost 1 1000 0.5
+```
+
+### 🌐 Subdomain Enumerator
+
+```bash
+cd tools/subdomain_enum
+python enumerator.py <domain>
+python enumerator.py <domain> <wordlist>
+python enumerator.py <domain> <wordlist> <timeout>
+python enumerator.py <domain> <wordlist> <timeout> <output_file>
+```
+
+Examples:
+
+```bash
+python enumerator.py google.com
+python enumerator.py google.com ../../wordlists/subdomains.txt
+python enumerator.py google.com ../../wordlists/subdomains.txt 5
+python enumerator.py google.com ../../wordlists/subdomains.txt 5 results.txt
+```
+
+## Requirements
+
+```bash
+pip install requests colorama
+```
 
 ## Part of the 90-Day Build Challenge
 
-- Project 1: [Secure Auth API](https://github.com/DevwithMujeeb/secure-auth-api) ✅
-- Project 2: [Vulnerable Web Lab](https://github.com/DevwithMujeeb/vulnerable-web-lab) ✅
-- Project 3: Security Tools (this repo) 🔜
+| Project                                                                   | Status      |
+| ------------------------------------------------------------------------- | ----------- |
+| [Secure Auth API](https://github.com/DevwithMujeeb/secure-auth-api)       | ✅ Shipped  |
+| [Vulnerable Web Lab](https://github.com/DevwithMujeeb/vulnerable-web-lab) | ✅ Shipped  |
+| Security Tools (this repo)                                                | 🔜 Building |
