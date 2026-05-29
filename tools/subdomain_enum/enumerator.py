@@ -36,7 +36,7 @@ def check_subdomain(domain, subdomain, timeout=3):
             continue
     return None, f"http://{subdomain}.{domain}"
 
-def enumerate(domain, wordlist_path, timeout=3, output_file=None):
+def run_enum(domain, wordlist_path, timeout=3, output_file=None):
     print_banner()
 
     wordlist = load_wordlist(wordlist_path)
@@ -104,7 +104,7 @@ def main():
     timeout = float(sys.argv[3]) if len(sys.argv) > 3 else 3
     output = sys.argv[4] if len(sys.argv) > 4 else None
 
-    enumerate(domain, wordlist, timeout, output)
+    run_enum(domain, wordlist, timeout, output)
 
 if __name__ == "__main__":
     main()
