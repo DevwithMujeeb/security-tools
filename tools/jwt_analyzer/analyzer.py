@@ -53,6 +53,64 @@ def print_section(title, data, color):
     for key, value in data.items():
         print(f"  {Fore.CYAN}{key:<20}{Style.RESET_ALL}: {value}")
 
+def check_expiry(payload):
+    exp = payload.get("exp")
+    iat = payload.get("iat")
+    now = datetime.utcnow().timestamp()
+
+    print(Fore.CYAN + f"\n  {'─' * 40}")
+    print(Fore.CYAN + f"  EXPIRY CHECK")
+    print(Fore.CYAN + f"  {'─' * 40}" + Style.RESET_ALL)
+
+    if exp:
+        exp_time = datetime.utcfromtimestamp(exp)
+        if now > exp:
+            print(f"  {Fore.RED}status              : ❌ EXPIRED")
+            print(f"  {Fore.RED}expired at          : {exp_time.strftime('%Y-%m-%d %H:%M:%S')} UTC")
+        else:
+            remaining = exp - now
+            minutes = int(remaining // 60)
+            seconds = int(remaining % 60)
+            print(f"  {Fore.GREEN}status              : ✅ VALID")
+            print(f"  {Fore.GREEN}expires at          : {exp_time.strftime('%Y-%m-%d %H:%M:%S')} UTC")
+            print(f"  {Fore.GREEN}time remaining      : {minutes}m {seconds}s")
+    else:
+        print(f"  {Fore.RED}status              : ❌ NO EXPIRY SET — token never expires")
+
+    if iat:
+        iat_time = datetime.utcfromtimestamp(iat)
+        print(f"  {Fore.CYAN}issued at           : {iat_time.strftime('%Y-%m-%d %H:%M:%S')} UTC")
+
+def check_security(header):
+    alg = header.get("alg", "unknown")
+
+    print(Fore.CYAN + f"\n  {'─' * 40}")
+    print(Fore.CYAN + f"  SECURITY ANALYSIS")
+    print(Fore.CYAN + f"  {'─' * 40}" + Style.RESET_ALL)
+
+    if alg in DANGEROUS_ALGORITHMS:
+        print(f"  {Fore.RED}algorithm           : ❌ DANGEROUS — '{alg}'")
+        print(f"  {Fore.RED}risk                : No signature verification. Anyone can forge this token.")
+        print(f"  {Fore.RED}recommendation      : Never use 'none' algorithm in production.")
+
+    elif alg in WEAK_ALGORITHMS:
+        print(f"  {Fore.YELLOW}algorithm           : ⚠️  WEAK — '{alg}'")
+        print(f"  {Fore.YELLOW}risk                : Vulnerable to brute-force if secret is short or common.")
+        print(f"  {Fore.YELLOW}recommendation      : Use RS256 or HS512 with a strong secret (32+ chars).")
+
+    elif alg in STRONG_ALGORITHMS:
+        print(f"  {Fore.GREEN}algorithm           : ✅ STRONG — '{alg}'")
+        print(f"  {Fore.GREEN}recommendation      : Good algorithm choice.")
+
+    else:
+        print(f"  {Fore.YELLOW}algorithm           : ⚠️  UNKNOWN — '{alg}'")
+        print(f"  {Fore.YELLOW}recommendation      : Verify this algorithm is secure and supported.")
+
+    # Check for sensitive data in payload
+    typ = header.get("typ", "")
+    if typ.upper() == "JWT":
+        print(f"  {Fore.CYAN}type                : JWT ✅")
+
 def analyze(token):
     print_banner()
     print(Fore.YELLOW + "-" * 50)
@@ -73,6 +131,12 @@ def analyze(token):
     print(Fore.CYAN + f"  {'─' * 40}" + Style.RESET_ALL)
     print(f"  {Fore.CYAN}{'signature':<20}{Style.RESET_ALL}: {signature[:32]}...")
     print(f"  {Fore.YELLOW}note                : signature cannot be verified without the secret key")
+
+    # Expiry check
+    check_expiry(payload)
+
+    # Security analysis
+    check_security(header)
 
     print(Fore.YELLOW + "\n" + "-" * 50)
     print(Fore.CYAN + "[*] Analysis complete.")
