@@ -4,11 +4,11 @@ A collection of Python CLI security tools built as part of my 90-day open-source
 
 ## Tools
 
-| Tool                    | Description                                            | Status      |
-| ----------------------- | ------------------------------------------------------ | ----------- |
-| 🔍 Port Scanner         | TCP port scanner with service detection                | ✅ Done     |
-| 🌐 Subdomain Enumerator | Wordlist-based subdomain discovery with HTTPS + export | ✅ Done     |
-| 🔑 JWT Analyzer         | CLI tool to decode and inspect JWT tokens              | 🔜 Building |
+| Tool                    | Description                                                 | Status  |
+| ----------------------- | ----------------------------------------------------------- | ------- |
+| 🔍 Port Scanner         | TCP port scanner with service detection                     | ✅ Done |
+| 🌐 Subdomain Enumerator | Wordlist-based subdomain discovery with HTTPS + export      | ✅ Done |
+| 🔑 JWT Analyzer         | CLI tool to decode, inspect and security-analyze JWT tokens | ✅ Done |
 
 ## Usage
 
@@ -49,6 +49,27 @@ python enumerator.py google.com ../../wordlists/subdomains.txt
 python enumerator.py google.com ../../wordlists/subdomains.txt 5
 python enumerator.py google.com ../../wordlists/subdomains.txt 5 results.txt
 ```
+
+### 🔑 JWT Analyzer
+
+```bash
+cd tools/jwt_analyzer
+python analyzer.py <jwt_token>
+```
+
+Example:
+
+```bash
+python analyzer.py eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsInJvbGUiOiJhZG1pbiJ9.signature
+```
+
+What it checks:
+
+- Decodes header, payload and signature
+- Checks token expiry and time remaining
+- Flags dangerous algorithms (none)
+- Flags weak algorithms (HS256)
+- Shows issued at and expires at timestamps
 
 ## Requirements
 
