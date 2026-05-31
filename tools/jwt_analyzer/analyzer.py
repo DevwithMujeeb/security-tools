@@ -1,7 +1,7 @@
 import sys
 import base64
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -56,14 +56,14 @@ def print_section(title, data, color):
 def check_expiry(payload):
     exp = payload.get("exp")
     iat = payload.get("iat")
-    now = datetime.utcnow().timestamp()
+    now = datetime.now(timezone.utc).timestamp()
 
     print(Fore.CYAN + f"\n  {'─' * 40}")
     print(Fore.CYAN + f"  EXPIRY CHECK")
     print(Fore.CYAN + f"  {'─' * 40}" + Style.RESET_ALL)
 
     if exp:
-        exp_time = datetime.utcfromtimestamp(exp)
+        exp_time = datetime.fromtimestamp(exp, tz=timezone.utc)
         if now > exp:
             print(f"  {Fore.RED}status              : ❌ EXPIRED")
             print(f"  {Fore.RED}expired at          : {exp_time.strftime('%Y-%m-%d %H:%M:%S')} UTC")
@@ -78,7 +78,7 @@ def check_expiry(payload):
         print(f"  {Fore.RED}status              : ❌ NO EXPIRY SET — token never expires")
 
     if iat:
-        iat_time = datetime.utcfromtimestamp(iat)
+        iat_time = datetime.fromtimestamp(iat, tz=timezone.utc)
         print(f"  {Fore.CYAN}issued at           : {iat_time.strftime('%Y-%m-%d %H:%M:%S')} UTC")
 
 def check_security(header):
